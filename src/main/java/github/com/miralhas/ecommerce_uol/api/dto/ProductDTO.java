@@ -13,6 +13,7 @@ public class ProductDTO {
     private String name;
     private String description;
     private OffsetDateTime createdAt;
+    private OffsetDateTime updatedAt;
     private Integer stock;
     private BigDecimal price;
 }
