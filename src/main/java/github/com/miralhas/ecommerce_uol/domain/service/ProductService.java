@@ -35,6 +35,11 @@ public class ProductService {
         return productRepository.save(product);
     }
 
+    @Transactional
+    public void saveAll(List<Product> products) {
+        productRepository.saveAll(products);
+    }
+
 
     @Transactional
     public Product update(Long id, ProductInput productInput) {

@@ -1,5 +1,6 @@
 package github.com.miralhas.ecommerce_uol.domain.model;
 
+import github.com.miralhas.ecommerce_uol.domain.exception.InsufficientProductStockException;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -36,4 +37,10 @@ public class Product {
 
     @Column(nullable = false)
     private BigDecimal price;
+
+    public void subtractStock(Integer quantity) {
+        var newStock = this.stock - quantity;
+        if (newStock < 0) throw new InsufficientProductStockException(id);
+        this.stock = newStock;
+    }
 }

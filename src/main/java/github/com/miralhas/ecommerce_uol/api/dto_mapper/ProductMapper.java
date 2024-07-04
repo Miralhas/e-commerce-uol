@@ -23,10 +23,6 @@ public class ProductMapper {
         return modelMapper.map(product, ProductSummaryDTO.class);
     }
 
-    public List<ProductDTO> toCollectionModel(List<Product> products) {
-        return products.stream().map(this::toModel).toList();
-    }
-
     public List<ProductSummaryDTO> toSummaryCollectionModel(List<Product> products) {
         return products.stream().map(this::toSummaryModel).toList();
     }

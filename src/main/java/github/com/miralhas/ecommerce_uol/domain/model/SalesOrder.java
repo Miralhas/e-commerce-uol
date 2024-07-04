@@ -1,41 +1,47 @@
 package github.com.miralhas.ecommerce_uol.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Objects;
 
 //@Data
 @Getter
 @Setter
 @Entity
-public class OrderItem {
+public class SalesOrder {
 
     @Id
 //    @EqualsAndHashCode.Include
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Integer quantity;
+    private BigDecimal totalValue;
 
-    private BigDecimal totalPrice;
+    @CreationTimestamp
+    private OffsetDateTime createdAt;
 
-    @ManyToOne
-    @JoinColumn(nullable = false)
-    private SalesOrder salesOrder;
+    @UpdateTimestamp
+    private OffsetDateTime updatedAt;
 
-    @ManyToOne
-    @JoinColumn(nullable = false)
-    private Product product;
+    @OneToMany(mappedBy = "salesOrder", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("salesOrder")
+    private List<OrderItem> items;
 
-    public void calculateTotalValue() {
-        var value = product.getPrice();
-        this.totalPrice = value.multiply(BigDecimal.valueOf(quantity));
+    public void calculateTotalPrice() {
+        items.forEach(OrderItem::calculateTotalValue);
+        this.totalValue = items.stream()
+                .map(OrderItem::getTotalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     @Override
@@ -45,8 +51,8 @@ public class OrderItem {
         Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
         Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
-        OrderItem orderItem = (OrderItem) o;
-        return getId() != null && Objects.equals(getId(), orderItem.getId());
+        SalesOrder that = (SalesOrder) o;
+        return getId() != null && Objects.equals(getId(), that.getId());
     }
 
     @Override
