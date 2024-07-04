@@ -40,21 +40,12 @@ public class OrderController {
     }
 
 
-//    @PostMapping
-//    @ResponseStatus(HttpStatus.CREATED)
-//    public OrderDTO createOrder(@RequestBody @Valid OrderInput orderInput) {
-//        SalesOrder salesOrder = orderUnmapper.toDomainObject(orderInput);
-//        salesOrder = orderService.create(salesOrder);
-//        return orderMapper.toModel(salesOrder);
-//    }
-
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public SalesOrder createOrder(@RequestBody @Valid OrderInput orderInput) {
+    public OrderDTO createOrder(@RequestBody @Valid OrderInput orderInput) {
         SalesOrder salesOrder = orderUnmapper.toDomainObject(orderInput);
-        SalesOrder savedOrder = orderService.create(salesOrder);
-        System.out.println(savedOrder);
-        return savedOrder;
+        salesOrder = orderService.create(salesOrder);
+        return orderMapper.toModel(salesOrder);
     }
 
 }

@@ -16,4 +16,5 @@ public class ProductDTO {
     private OffsetDateTime updatedAt;
     private Integer stock;
     private BigDecimal price;
+    private String status;
 }

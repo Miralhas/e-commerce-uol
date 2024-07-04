@@ -11,4 +11,5 @@ public class ProductSummaryDTO {
     private Long id;
     private String name;
     private BigDecimal price;
+    private String status;
 }

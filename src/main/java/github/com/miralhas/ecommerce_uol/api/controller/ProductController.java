@@ -61,4 +61,18 @@ public class ProductController {
     public void deleteProduct(@PathVariable Long id) {
         productService.delete(id);
     }
+
+
+    @PutMapping("/{id}/activate")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void activateProduct(@PathVariable Long id) {
+        productService.activateProduct(id);
+    }
+
+
+    @PutMapping("/{id}/inactivate")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void inactivateProduct(@PathVariable Long id) {
+        productService.inactivateProduct(id);
+    }
 }

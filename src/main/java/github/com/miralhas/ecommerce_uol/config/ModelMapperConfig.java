@@ -13,8 +13,11 @@ public class ModelMapperConfig {
     public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
 
-//        modelMapper.createTypeMap(OrderItemInput.class, OrderItem.class)
-//                .addMappings(mapper -> mapper.skip(OrderItem::setId));
+
+        // Na hora de fazer o mapeamento do input para o orderItem, o modelmapper estava passando o id do produto para
+        // o orderItem, por isso foi necessário especificar para que ele pule o mapeamento do ID.
+        modelMapper.createTypeMap(OrderItemInput.class, OrderItem.class)
+                .addMappings(mapper -> mapper.skip(OrderItem::setId));
 
         return modelMapper;
     }

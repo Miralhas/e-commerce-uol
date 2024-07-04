@@ -1,5 +1,7 @@
 package github.com.miralhas.ecommerce_uol.domain.service;
 
+import github.com.miralhas.ecommerce_uol.domain.exception.BusinessException;
+import github.com.miralhas.ecommerce_uol.domain.exception.InactiveProductException;
 import github.com.miralhas.ecommerce_uol.domain.exception.OrderNotFoundException;
 import github.com.miralhas.ecommerce_uol.domain.model.Product;
 import github.com.miralhas.ecommerce_uol.domain.model.SalesOrder;
@@ -22,10 +24,12 @@ public class OrderService {
         return orderRepository.findAll();
     }
 
+
     public SalesOrder findByIdOrException(Long id) {
         return orderRepository.findById(id)
                 .orElseThrow(() -> new OrderNotFoundException(id));
     }
+
 
     @Transactional
     public SalesOrder create(SalesOrder salesOrder) {
@@ -38,10 +42,10 @@ public class OrderService {
     private void validateOrderItems(SalesOrder salesOrder) {
         salesOrder.getItems().forEach(item -> {
             Product product = productService.findByIdOrException(item.getProduct().getId());
+            if (product.isInactive()) throw new InactiveProductException(product.getId());
             product.subtractStock(item.getQuantity());
             item.setSalesOrder(salesOrder);
             item.setProduct(product);
-            item.setId(null);
         });
     }
 }
