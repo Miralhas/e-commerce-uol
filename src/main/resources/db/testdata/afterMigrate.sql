@@ -1,3 +1,15 @@
+set foreign_key_checks = 0;
+
+delete from order_item;
+delete from sales_order;
+delete from product;
+
+set foreign_key_checks = 1;
+
+alter table order_item auto_increment = 1;
+alter table sales_order auto_increment = 1;
+alter table product auto_increment = 1;
+
 insert into product(name, description, stock, price, created_at, updated_at, status) values('a', 'aaa', 10, 10, utc_timestamp, utc_timestamp, 'ACTIVE');
 insert into product(name, description, stock, price, created_at, updated_at, status) values('b', 'bbb', 10, 10, utc_timestamp, utc_timestamp, 'ACTIVE');
 
