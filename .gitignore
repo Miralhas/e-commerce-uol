@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+src/main/java/TesteMain.java
+src/main/resources/ddl.sql
