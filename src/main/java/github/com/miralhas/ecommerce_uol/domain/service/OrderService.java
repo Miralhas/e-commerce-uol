@@ -2,7 +2,6 @@ package github.com.miralhas.ecommerce_uol.domain.service;
 
 import github.com.miralhas.ecommerce_uol.api.dto.input.OrderInput;
 import github.com.miralhas.ecommerce_uol.api.dto_mapper.OrderUnmapper;
-import github.com.miralhas.ecommerce_uol.domain.exception.BusinessException;
 import github.com.miralhas.ecommerce_uol.domain.exception.InactiveProductException;
 import github.com.miralhas.ecommerce_uol.domain.exception.OrderNotFoundException;
 import github.com.miralhas.ecommerce_uol.domain.model.Product;
@@ -42,17 +41,6 @@ public class OrderService {
     }
 
 
-    private void validateOrderItems(SalesOrder salesOrder) {
-        salesOrder.getItems().forEach(item -> {
-            Product product = productService.findByIdOrException(item.getProduct().getId());
-            if (product.isInactive()) throw new InactiveProductException(product.getId());
-            product.subtractStock(item.getQuantity());
-            item.setSalesOrder(salesOrder);
-            item.setProduct(product);
-        });
-    }
-
-
     @Transactional
     public SalesOrder update(Long id, OrderInput orderInput) {
         SalesOrder order = findByIdOrException(id);
@@ -66,5 +54,28 @@ public class OrderService {
     @Transactional
     public void deleteOrderById(Long id) {
         orderRepository.deleteById(id);
+    }
+
+
+    @Transactional
+    public void confirmOrder(Long id) {
+        findByIdOrException(id).confirm();
+    }
+
+
+    @Transactional
+    public void cancelOrder(Long id) {
+        findByIdOrException(id).cancel();
+    }
+
+
+    private void validateOrderItems(SalesOrder salesOrder) {
+        salesOrder.getItems().forEach(item -> {
+            Product product = productService.findByIdOrException(item.getProduct().getId());
+            if (product.isInactive()) throw new InactiveProductException(product.getId());
+            product.subtractStock(item.getQuantity());
+            item.setSalesOrder(salesOrder);
+            item.setProduct(product);
+        });
     }
 }

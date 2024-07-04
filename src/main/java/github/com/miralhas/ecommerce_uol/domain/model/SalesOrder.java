@@ -1,6 +1,7 @@
 package github.com.miralhas.ecommerce_uol.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import github.com.miralhas.ecommerce_uol.domain.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -32,6 +33,9 @@ public class SalesOrder {
     @UpdateTimestamp
     private OffsetDateTime updatedAt;
 
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status = OrderStatus.CREATED;
+
     @OneToMany(mappedBy = "salesOrder", cascade = CascadeType.ALL)
     @JsonIgnoreProperties("salesOrder")
     private List<OrderItem> items;
@@ -42,6 +46,34 @@ public class SalesOrder {
                 .map(OrderItem::getTotalPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
+
+
+    public void confirm() {
+        validateStatus();
+        validateItemsLength();
+        this.status = OrderStatus.CONFIRMED;
+    }
+
+
+    public void cancel() {
+        validateStatus();
+        this.status = OrderStatus.CANCELED;
+    }
+
+
+    private void validateItemsLength() {
+        if (items.isEmpty()) {
+            throw new BusinessException("Uma venda tem que ter no mínimo 1 produto para ser concluída");
+        }
+    }
+
+
+    private void validateStatus() {
+        if (status != OrderStatus.CREATED) {
+            throw new BusinessException("Status desse pedido já foi alterado anteriormente");
+        }
+    }
+
 
     @Override
     public final boolean equals(Object o) {

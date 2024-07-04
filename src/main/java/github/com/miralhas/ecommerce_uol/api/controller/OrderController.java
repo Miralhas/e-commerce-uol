@@ -63,4 +63,18 @@ public class OrderController {
         orderService.deleteOrderById(id);
     }
 
+
+    @PutMapping("/{id}/confirm")
+    @ResponseStatus(HttpStatus.OK)
+    public void confirmOrder(@PathVariable Long id) {
+        orderService.confirmOrder(id);
+    }
+
+
+    @PutMapping("/{id}/cancel")
+    @ResponseStatus(HttpStatus.OK)
+    public void cancelOrder(@PathVariable Long id) {
+        orderService.cancelOrder(id);
+    }
+
 }

@@ -15,4 +15,5 @@ public class OrderDTO {
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
     private List<OrderItemDTO> items;
+    private String status;
 }
