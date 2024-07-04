@@ -17,6 +17,7 @@ public class OrderUnmapper {
     }
 
     public void copyToDomainObject(OrderInput orderInput, SalesOrder salesOrder) {
+        salesOrder.getItems().forEach(i -> i.setProduct(null));
         modelMapper.map(orderInput, salesOrder);
     }
 }

@@ -1,2 +1,2 @@
 insert into product(name, description, stock, price, created_at, updated_at, status) values('a', 'aaa', 10, 10, utc_timestamp, utc_timestamp, 'ACTIVE');
-insert into product(name, description, stock, price, created_at, updated_at, status) values('b', 'bbb', 10, 10, utc_timestamp, utc_timestamp, 'INACTIVE');
+insert into product(name, description, stock, price, created_at, updated_at, status) values('b', 'bbb', 10, 10, utc_timestamp, utc_timestamp, 'ACTIVE');

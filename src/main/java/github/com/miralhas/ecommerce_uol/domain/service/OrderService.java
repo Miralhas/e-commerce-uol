@@ -1,5 +1,7 @@
 package github.com.miralhas.ecommerce_uol.domain.service;
 
+import github.com.miralhas.ecommerce_uol.api.dto.input.OrderInput;
+import github.com.miralhas.ecommerce_uol.api.dto_mapper.OrderUnmapper;
 import github.com.miralhas.ecommerce_uol.domain.exception.BusinessException;
 import github.com.miralhas.ecommerce_uol.domain.exception.InactiveProductException;
 import github.com.miralhas.ecommerce_uol.domain.exception.OrderNotFoundException;
@@ -19,6 +21,7 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final ProductService productService;
+    private final OrderUnmapper orderUnmapper;
 
     public List<SalesOrder> findAll() {
         return orderRepository.findAll();
@@ -47,5 +50,21 @@ public class OrderService {
             item.setSalesOrder(salesOrder);
             item.setProduct(product);
         });
+    }
+
+
+    @Transactional
+    public SalesOrder update(Long id, OrderInput orderInput) {
+        SalesOrder order = findByIdOrException(id);
+        orderUnmapper.copyToDomainObject(orderInput, order);
+        validateOrderItems(order);
+        order.calculateTotalPrice();
+        return orderRepository.save(order);
+    }
+
+
+    @Transactional
+    public void deleteOrderById(Long id) {
+        orderRepository.deleteById(id);
     }
 }

@@ -48,4 +48,19 @@ public class OrderController {
         return orderMapper.toModel(salesOrder);
     }
 
+
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public OrderDTO updateOrder(@PathVariable Long id, @RequestBody @Valid OrderInput orderInput) {
+        SalesOrder order = orderService.update(id, orderInput);
+        return orderMapper.toModel(order);
+    }
+
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteOrder(@PathVariable Long id) {
+        orderService.deleteOrderById(id);
+    }
+
 }
