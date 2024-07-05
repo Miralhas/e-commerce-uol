@@ -12,11 +12,14 @@ import github.com.miralhas.ecommerce_uol.domain.service.OrderService;
 import github.com.miralhas.ecommerce_uol.infrastructure.repository.spec.OrderSpec;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -31,26 +34,35 @@ public class OrderController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<OrderSummaryDTO> getAllOrders(OrderFilter filter) {
+    public ResponseEntity<List<OrderSummaryDTO>> getAllOrders(OrderFilter filter) {
         List<SalesOrder> salesOrders = orderRepository.findAll(OrderSpec.withFilter(filter));
-        return orderMapper.toSummaryCollectionModel(salesOrders);
+        List<OrderSummaryDTO> ordersSummaryDTO = orderMapper.toSummaryCollectionModel(salesOrders);
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
+                .body(ordersSummaryDTO);
     }
 
 
     @GetMapping("/monthly")
     @ResponseStatus(HttpStatus.OK)
-    public List<OrderSummaryDTO> getAllOrdersByMonth(@RequestParam(name = "num", required = false) Integer num) {
+    public ResponseEntity<List<OrderSummaryDTO>> getAllOrdersByMonth(@RequestParam(name = "num", required = false) Integer num) {
         if (num == null) num = OffsetDateTime.now().getMonthValue();
         List<SalesOrder> salesOrders = orderRepository.findAllOrdersByMonth(num);
-        return orderMapper.toSummaryCollectionModel(salesOrders);
+        List<OrderSummaryDTO> ordersSummaryDTO = orderMapper.toSummaryCollectionModel(salesOrders);
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
+                .body(ordersSummaryDTO);
     }
 
 
     @GetMapping("/weekly")
     @ResponseStatus(HttpStatus.OK)
-    public List<OrderSummaryDTO> getAllWeeklyOrders() {
+    public ResponseEntity<List<OrderSummaryDTO>> getAllWeeklyOrders() {
         List<SalesOrder> salesOrders = orderRepository.findAllWeeklyOrders();
-        return orderMapper.toSummaryCollectionModel(salesOrders);
+        List<OrderSummaryDTO> ordersSummaryDTO = orderMapper.toSummaryCollectionModel(salesOrders);
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
+                .body(ordersSummaryDTO);
     }
 
 

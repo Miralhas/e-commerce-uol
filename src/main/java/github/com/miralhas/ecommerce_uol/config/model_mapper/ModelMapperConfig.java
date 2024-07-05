@@ -1,4 +1,4 @@
-package github.com.miralhas.ecommerce_uol.config;
+package github.com.miralhas.ecommerce_uol.config.model_mapper;
 
 import github.com.miralhas.ecommerce_uol.api.dto.input.OrderItemInput;
 import github.com.miralhas.ecommerce_uol.domain.model.OrderItem;

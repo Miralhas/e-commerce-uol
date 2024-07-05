@@ -9,10 +9,13 @@ import github.com.miralhas.ecommerce_uol.domain.model.Product;
 import github.com.miralhas.ecommerce_uol.domain.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,9 +28,12 @@ public class ProductController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ProductSummaryDTO> getAllProducts() {
+    public ResponseEntity<List<ProductSummaryDTO>> getAllProducts() {
         List<Product> products = productService.getAll();
-        return productMapper.toSummaryCollectionModel(products);
+        List<ProductSummaryDTO> productsSummaryDTO = productMapper.toSummaryCollectionModel(products);
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
+                .body(productsSummaryDTO);
     }
 
 
