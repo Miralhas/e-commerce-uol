@@ -52,4 +52,12 @@ public class Product {
     public boolean isInactive() {
         return status.equals(Status.INACTIVE);
     }
+
+    public void activate() {
+        this.status = Status.ACTIVE;
+    }
+
+    public void inactivate() {
+        this.status = Status.INACTIVE;
+    }
 }

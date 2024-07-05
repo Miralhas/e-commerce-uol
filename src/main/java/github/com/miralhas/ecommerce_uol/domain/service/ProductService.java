@@ -60,16 +60,13 @@ public class ProductService {
 
     @Transactional
     public void activateProduct(Long id) {
-        Product product = findByIdOrException(id);
-        product.setStatus(Product.Status.ACTIVE);
+        findByIdOrException(id).activate();
     }
 
 
     @Transactional
     public void inactivateProduct(Long id) {
-        Product product = findByIdOrException(id);
-        product.setStatus(Product.Status.INACTIVE);
+        findByIdOrException(id).inactivate();
     }
-
 
 }
