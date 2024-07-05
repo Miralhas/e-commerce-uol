@@ -22,10 +22,6 @@ public class OrderService {
     private final ProductService productService;
     private final OrderUnmapper orderUnmapper;
 
-    public List<SalesOrder> findAll() {
-        return orderRepository.findAll();
-    }
-
 
     public SalesOrder findByIdOrException(Long id) {
         return orderRepository.findById(id)
