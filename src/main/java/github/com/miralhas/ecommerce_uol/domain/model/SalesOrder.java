@@ -37,7 +37,6 @@ public class SalesOrder {
     private OrderStatus status = OrderStatus.CREATED;
 
     @OneToMany(mappedBy = "salesOrder", cascade = CascadeType.ALL)
-    @JsonIgnoreProperties("salesOrder")
     private List<OrderItem> items;
 
     public void calculateTotalPrice() {
