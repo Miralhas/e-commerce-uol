@@ -2,16 +2,22 @@ package github.com.miralhas.ecommerce_uol.api.controller;
 
 import github.com.miralhas.ecommerce_uol.api.dto.OrderDTO;
 import github.com.miralhas.ecommerce_uol.api.dto.OrderSummaryDTO;
+import github.com.miralhas.ecommerce_uol.api.dto.PageDTO;
 import github.com.miralhas.ecommerce_uol.api.dto.filter.OrderFilter;
 import github.com.miralhas.ecommerce_uol.api.dto.input.OrderInput;
 import github.com.miralhas.ecommerce_uol.api.dto_mapper.OrderMapper;
 import github.com.miralhas.ecommerce_uol.api.dto_mapper.OrderUnmapper;
+import github.com.miralhas.ecommerce_uol.config.model_mapper.PagesMapper;
 import github.com.miralhas.ecommerce_uol.domain.model.SalesOrder;
 import github.com.miralhas.ecommerce_uol.domain.repository.OrderRepository;
 import github.com.miralhas.ecommerce_uol.domain.service.OrderService;
 import github.com.miralhas.ecommerce_uol.infrastructure.repository.spec.OrderSpec;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -31,16 +36,19 @@ public class OrderController {
     private final OrderMapper orderMapper;
     private final OrderUnmapper orderUnmapper;
     private final OrderRepository orderRepository;
+    private final PagesMapper pagesMapper;
 
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<OrderSummaryDTO>> getAllOrders(OrderFilter filter) {
-        List<SalesOrder> salesOrders = orderRepository.findAll(OrderSpec.withFilter(filter));
-        List<OrderSummaryDTO> ordersSummaryDTO = orderMapper.toSummaryCollectionModel(salesOrders);
+    public ResponseEntity<PageDTO> getAllOrders(@PageableDefault(size = 2) Pageable pageable, OrderFilter filter) {
+        Page<SalesOrder> pageOrder = orderRepository.findAll(OrderSpec.withFilter(filter), pageable);
+        List<OrderSummaryDTO> ordersSummaryDTO = orderMapper.toSummaryCollectionModel(pageOrder.getContent());
+        Page<OrderSummaryDTO> pageOrderSummary = new PageImpl<>(ordersSummaryDTO, pageable, pageOrder.getTotalElements());
+        PageDTO pageDTO = pagesMapper.toModel(pageOrderSummary);
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
-                .body(ordersSummaryDTO);
+                .body(pageDTO);
     }
 
 
