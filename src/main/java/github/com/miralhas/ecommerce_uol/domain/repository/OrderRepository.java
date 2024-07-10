@@ -8,8 +8,5 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface OrderRepository extends JpaRepository<SalesOrder, Long>, JpaSpecificationExecutor<SalesOrder> {
-    @Query("from SalesOrder o where MONTH(o.createdAt) = :month")
-    List<SalesOrder> findAllOrdersByMonth(Integer month);
-    @Query("from SalesOrder o where YEARWEEK(o.createdAt, 1) = YEARWEEK(CURDATE(), 1)")
-    List<SalesOrder> findAllWeeklyOrders();
+
 }

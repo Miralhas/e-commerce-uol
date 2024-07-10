@@ -52,29 +52,6 @@ public class OrderController {
     }
 
 
-    @GetMapping("/monthly")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<OrderSummaryDTO>> getAllOrdersByMonth(@RequestParam(name = "num", required = false) Integer num) {
-        if (num == null) num = OffsetDateTime.now().getMonthValue();
-        List<SalesOrder> salesOrders = orderRepository.findAllOrdersByMonth(num);
-        List<OrderSummaryDTO> ordersSummaryDTO = orderMapper.toSummaryCollectionModel(salesOrders);
-        return ResponseEntity.ok()
-                .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
-                .body(ordersSummaryDTO);
-    }
-
-
-    @GetMapping("/weekly")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<OrderSummaryDTO>> getAllWeeklyOrders() {
-        List<SalesOrder> salesOrders = orderRepository.findAllWeeklyOrders();
-        List<OrderSummaryDTO> ordersSummaryDTO = orderMapper.toSummaryCollectionModel(salesOrders);
-        return ResponseEntity.ok()
-                .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
-                .body(ordersSummaryDTO);
-    }
-
-
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public OrderDTO getOrderById(@PathVariable Long id) {
