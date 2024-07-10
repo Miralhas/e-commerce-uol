@@ -19,4 +19,8 @@ public class OrderFilter {
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private OffsetDateTime createdBefore;
+
+    private boolean monthly;
+
+    private boolean weekly;
 }
