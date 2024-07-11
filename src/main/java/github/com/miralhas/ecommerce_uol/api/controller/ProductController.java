@@ -5,6 +5,7 @@ import github.com.miralhas.ecommerce_uol.api.dto.ProductSummaryDTO;
 import github.com.miralhas.ecommerce_uol.api.dto.input.ProductInput;
 import github.com.miralhas.ecommerce_uol.api.dto_mapper.ProductMapper;
 import github.com.miralhas.ecommerce_uol.api.dto_mapper.ProductUnmapper;
+import github.com.miralhas.ecommerce_uol.api.open_api.ProductControllerOpenAPI;
 import github.com.miralhas.ecommerce_uol.domain.model.Product;
 import github.com.miralhas.ecommerce_uol.domain.service.ProductService;
 import jakarta.validation.Valid;
@@ -20,12 +21,15 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/products")
-public class ProductController {
+public class ProductController implements ProductControllerOpenAPI {
 
     private final ProductMapper productMapper;
     private final ProductUnmapper productUnmapper;
     private final ProductService productService;
 
+    // Cache com Shallow ETags. src/main/java/config/web
+    // https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-caching.html
+    @Override
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<ProductSummaryDTO>> getAllProducts() {
@@ -37,6 +41,7 @@ public class ProductController {
     }
 
 
+    @Override
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ProductDTO getProductById(@PathVariable Long id) {
@@ -45,6 +50,7 @@ public class ProductController {
     }
 
 
+    @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ProductDTO createProduct(@RequestBody @Valid ProductInput productInput) {
@@ -54,6 +60,7 @@ public class ProductController {
     }
 
 
+    @Override
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ProductDTO updateProduct(@PathVariable Long id, @RequestBody @Valid ProductInput productInput) {
@@ -62,6 +69,7 @@ public class ProductController {
     }
 
 
+    @Override
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteProduct(@PathVariable Long id) {
@@ -69,6 +77,7 @@ public class ProductController {
     }
 
 
+    @Override
     @PutMapping("/{id}/activate")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void activateProduct(@PathVariable Long id) {
@@ -76,6 +85,7 @@ public class ProductController {
     }
 
 
+    @Override
     @PutMapping("/{id}/inactivate")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void inactivateProduct(@PathVariable Long id) {

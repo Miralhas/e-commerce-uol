@@ -3,7 +3,6 @@ package github.com.miralhas.ecommerce_uol.api.exception_handler;
 import github.com.miralhas.ecommerce_uol.domain.exception.BusinessException;
 import github.com.miralhas.ecommerce_uol.domain.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.*;
@@ -22,6 +21,10 @@ import java.util.HashMap;
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     private final MessageSource messageSource;
+
+    // Padrão de Resposta RFC 9457
+    // https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-ann-rest-exceptions.html
+    // https://datatracker.ietf.org/doc/html/rfc9457
 
     @ExceptionHandler(BusinessException.class)
     public ProblemDetail handleBusinessException(BusinessException ex, WebRequest webRequest) {

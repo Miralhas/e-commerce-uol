@@ -1,4 +1,4 @@
-package github.com.miralhas.ecommerce_uol.config.model_mapper;
+package github.com.miralhas.ecommerce_uol.api.dto_mapper;
 
 import github.com.miralhas.ecommerce_uol.api.dto.PageDTO;
 import org.springframework.data.domain.Page;

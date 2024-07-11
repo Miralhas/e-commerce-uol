@@ -1,5 +1,6 @@
 package github.com.miralhas.ecommerce_uol.api.dto.filter;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
