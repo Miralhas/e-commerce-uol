@@ -1,5 +1,6 @@
 package github.com.miralhas.ecommerce_uol.domain.model;
 
+import github.com.miralhas.ecommerce_uol.domain.exception.InsufficientProductStockException;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,6 +14,8 @@ import java.time.OffsetDateTime;
 @Entity
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Product {
+
+    public enum Status {ACTIVE, INACTIVE}
 
     @Id
     @EqualsAndHashCode.Include
@@ -36,4 +39,25 @@ public class Product {
 
     @Column(nullable = false)
     private BigDecimal price;
+
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.ACTIVE;
+
+    public void subtractStock(Integer quantity) {
+        var newStock = this.stock - quantity;
+        if (newStock < 0) throw new InsufficientProductStockException(id);
+        this.stock = newStock;
+    }
+
+    public boolean isInactive() {
+        return status.equals(Status.INACTIVE);
+    }
+
+    public void activate() {
+        this.status = Status.ACTIVE;
+    }
+
+    public void inactivate() {
+        this.status = Status.INACTIVE;
+    }
 }
