@@ -1,4 +1,4 @@
-package github.com.miralhas.ecommerce_uol.config.secutiry;
+package github.com.miralhas.ecommerce_uol.config.security;
 
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;

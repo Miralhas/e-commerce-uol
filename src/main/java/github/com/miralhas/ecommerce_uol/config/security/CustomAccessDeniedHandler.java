@@ -1,4 +1,4 @@
-package github.com.miralhas.ecommerce_uol.config.secutiry;
+package github.com.miralhas.ecommerce_uol.config.security;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -39,6 +39,10 @@ public class SalesOrder {
     @OneToMany(mappedBy = "salesOrder", cascade = CascadeType.ALL)
     private List<OrderItem> items;
 
+    @ManyToOne(cascade = {CascadeType.MERGE})
+    @JoinColumn(nullable = false)
+    private User user;
+
     public void calculateTotalPrice() {
         items.forEach(OrderItem::calculateTotalValue);
         this.totalValue = items.stream()
