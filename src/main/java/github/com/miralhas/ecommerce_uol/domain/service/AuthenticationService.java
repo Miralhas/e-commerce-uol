@@ -1,13 +1,18 @@
 package github.com.miralhas.ecommerce_uol.domain.service;
 
+import github.com.miralhas.ecommerce_uol.api.dto.input.LoginInput;
 import github.com.miralhas.ecommerce_uol.domain.exception.UserAlreadyExistsException;
 import github.com.miralhas.ecommerce_uol.domain.model.Role;
 import github.com.miralhas.ecommerce_uol.domain.model.User;
 import github.com.miralhas.ecommerce_uol.domain.repository.RoleRepository;
 import github.com.miralhas.ecommerce_uol.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +26,8 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final TokenService tokenService;
 
     public User findByEmailOrException(String email) {
         return userRepository.findUserByEmail(email)
@@ -38,6 +45,14 @@ public class AuthenticationService {
                 });
     }
 
+    public Jwt authenticate(LoginInput loginInput) {
+        var authenticationToken = new UsernamePasswordAuthenticationToken(
+                loginInput.getEmail(), loginInput.getPassword()
+        );
+        var authenticationResult = authenticationManager.authenticate(authenticationToken);
+        SecurityContextHolder.getContext().setAuthentication(authenticationResult);
+        return tokenService.generateToken(authenticationResult);
+    }
 
     @Transactional
     public User create(User user) {

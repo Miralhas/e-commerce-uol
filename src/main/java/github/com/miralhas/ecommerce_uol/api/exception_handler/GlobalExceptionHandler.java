@@ -7,6 +7,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.*;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -31,6 +32,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         var problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
         problemDetail.setTitle("Requisição Inválida");
         problemDetail.setType(URI.create("http://localhost:8080/error/requisicao-invalida"));
+        return problemDetail;
+    }
+
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ProblemDetail handleAuthenticationException(AuthenticationException ex, WebRequest webRequest) {
+        var problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problemDetail.setTitle("Autenticação Inválida");
+        problemDetail.setType(URI.create("http://localhost:8080/error/authentication"));
         return problemDetail;
     }
 

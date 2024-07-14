@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Orders")
@@ -23,7 +24,7 @@ public interface OrderControllerOpenAPI {
     OrderDTO getOrderById(@PathVariable Long id);
 
     @Operation(summary = "Create a order")
-    OrderDTO createOrder(@RequestBody @Valid OrderInput orderInput);
+    OrderDTO createOrder(@RequestBody @Valid OrderInput orderInput, JwtAuthenticationToken authToken);
 
     @Operation(summary = "Create a order")
     OrderDTO updateOrder(@PathVariable Long id, @RequestBody @Valid OrderInput orderInput);

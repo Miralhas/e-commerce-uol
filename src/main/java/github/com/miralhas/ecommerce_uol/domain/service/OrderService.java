@@ -7,7 +7,10 @@ import github.com.miralhas.ecommerce_uol.domain.exception.OrderNotFoundException
 import github.com.miralhas.ecommerce_uol.domain.model.Product;
 import github.com.miralhas.ecommerce_uol.domain.model.SalesOrder;
 import github.com.miralhas.ecommerce_uol.domain.repository.OrderRepository;
+import github.com.miralhas.ecommerce_uol.domain.security.SecurityUser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +22,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ProductService productService;
     private final OrderUnmapper orderUnmapper;
+    private final AuthenticationService authenticationService;
 
 
     public SalesOrder findByIdOrException(Long id) {
@@ -28,9 +32,11 @@ public class OrderService {
 
 
     @Transactional
-    public SalesOrder create(SalesOrder salesOrder) {
+    public SalesOrder create(SalesOrder salesOrder, JwtAuthenticationToken authToken) {
         validateOrderItems(salesOrder);
         salesOrder.calculateTotalPrice();
+        var authUser = authenticationService.findByEmailOrException(authToken.getName());
+        salesOrder.setUser(authUser);
         return orderRepository.save(salesOrder);
     }
 

@@ -22,6 +22,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -67,9 +68,9 @@ public class OrderController implements OrderControllerOpenAPI {
     @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public OrderDTO createOrder(@RequestBody @Valid OrderInput orderInput) {
+    public OrderDTO createOrder(@RequestBody @Valid OrderInput orderInput, JwtAuthenticationToken authToken) {
         SalesOrder salesOrder = orderUnmapper.toDomainObject(orderInput);
-        salesOrder = orderService.create(salesOrder);
+        salesOrder = orderService.create(salesOrder, authToken);
         return orderMapper.toModel(salesOrder);
     }
 
