@@ -12,6 +12,7 @@ import github.com.miralhas.ecommerce_uol.domain.service.TokenService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -37,6 +38,14 @@ public class AuthenticationController {
     public LoginDTO login(@RequestBody @Valid LoginInput loginInput) {
         var jwt = authenticationService.authenticate(loginInput);
         return new LoginDTO(jwt.getTokenValue(), TokenService.TOKEN_EXPIRATION_TIME);
+    }
+
+
+    @GetMapping("/user")
+    @ResponseStatus(HttpStatus.OK)
+    public UserDTO getUser(JwtAuthenticationToken authToken) {
+        User user = authenticationService.findUserByEmailOrException(authToken.getName());
+        return userMapper.toModel(user);
     }
 
 }

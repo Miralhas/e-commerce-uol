@@ -29,7 +29,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
 
-    public User findByEmailOrException(String email) {
+    public User findUserByEmailOrException(String email) {
         return userRepository.findUserByEmail(email)
                 .orElseThrow(() -> {
                     var message = "Usuário de email '%s' não foi encontrado".formatted(email);
