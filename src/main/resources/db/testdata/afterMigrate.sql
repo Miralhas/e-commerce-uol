@@ -23,6 +23,12 @@ VALUES (1, 'admin@admin.com', 'admin', '1133004499', utc_timestamp, '$2a$10$CNr3
 insert into user_roles(role_id, user_id) VALUES (1,1);
 insert into user_roles(role_id, user_id) VALUES (2,1);
 
+INSERT INTO user (id, email, username, telefone, created_at, password)
+VALUES (2, 'abc@g.com', 'abc', '11958512321', utc_timestamp, '$2a$10$Vb.FssW37mML9aIyFtoiz.S16N5BAqN60aphB5ftdR5BluSCYR1He');
+
+insert into user_roles(role_id, user_id) VALUES (2,2);
+
+
 insert into product(name, description, stock, price, created_at, updated_at, status) values('a', 'aaa', 10, 10, utc_timestamp, utc_timestamp, 'ACTIVE');
 insert into product(name, description, stock, price, created_at, updated_at, status) values('b', 'bbb', 10, 10, utc_timestamp, utc_timestamp, 'ACTIVE');
 

@@ -22,6 +22,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
@@ -78,6 +79,7 @@ public class OrderController implements OrderControllerOpenAPI {
     @Override
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ADMIN')")
     public OrderDTO updateOrder(@PathVariable Long id, @RequestBody @Valid OrderInput orderInput) {
         SalesOrder order = orderService.update(id, orderInput);
         return orderMapper.toModel(order);
@@ -86,6 +88,7 @@ public class OrderController implements OrderControllerOpenAPI {
 
     @Override
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteOrder(@PathVariable Long id) {
         orderService.deleteOrderById(id);
@@ -94,6 +97,7 @@ public class OrderController implements OrderControllerOpenAPI {
 
     @Override
     @PutMapping("/{id}/confirm")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.OK)
     public void confirmOrder(@PathVariable Long id) {
         orderService.confirmOrder(id);
@@ -102,6 +106,7 @@ public class OrderController implements OrderControllerOpenAPI {
 
     @Override
     @PutMapping("/{id}/cancel")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.OK)
     public void cancelOrder(@PathVariable Long id) {
         orderService.cancelOrder(id);

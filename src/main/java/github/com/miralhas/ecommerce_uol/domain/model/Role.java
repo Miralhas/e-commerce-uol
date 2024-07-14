@@ -23,8 +23,8 @@ public class Role {
 
     @Getter
     public enum Value {
-        USER(new SimpleGrantedAuthority("ROLE_USER")),
-        ADMIN(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        USER(new SimpleGrantedAuthority("USER")),
+        ADMIN(new SimpleGrantedAuthority("ADMIN"));
 
         private final SimpleGrantedAuthority authority;
 

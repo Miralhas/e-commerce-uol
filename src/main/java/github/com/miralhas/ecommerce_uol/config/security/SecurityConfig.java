@@ -53,7 +53,7 @@ public class SecurityConfig {
                         jwt.decoder(jwtDecoder);
                         jwt.jwtAuthenticationConverter(jwtAuthenticationConverter);
                     });
-                    resourceServer.accessDeniedHandler(new CustomAccessDeniedHandler());
+                    resourceServer.accessDeniedHandler(new CustomAccessDeniedHandlerImpl());
                     resourceServer.authenticationEntryPoint(new CustomAuthenticationEntryPoint());
                 })
                 .authorizeHttpRequests(authz -> {

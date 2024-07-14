@@ -7,6 +7,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.*;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -26,7 +28,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     // Padrão de Resposta RFC 9457
     // https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-ann-rest-exceptions.html
     // https://datatracker.ietf.org/doc/html/rfc9457
-
     @ExceptionHandler(BusinessException.class)
     public ProblemDetail handleBusinessException(BusinessException ex, WebRequest webRequest) {
         var problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
@@ -56,6 +57,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleUncaughtException(Exception ex, WebRequest webRequest) {
+        if (ex instanceof AccessDeniedException authError) throw authError;
         var status = HttpStatus.INTERNAL_SERVER_ERROR;
         var detail = "Ocorreu um erro interno inesperado no sistema. Tente novamente e se "
                 + "o problema persistir, entre em contato com o administrador do sistema.";
