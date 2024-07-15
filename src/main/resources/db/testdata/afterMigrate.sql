@@ -6,6 +6,7 @@ delete from product;
 delete from user_roles;
 delete from role;
 delete from user;
+delete from password_reset_token;
 
 set foreign_key_checks = 1;
 
