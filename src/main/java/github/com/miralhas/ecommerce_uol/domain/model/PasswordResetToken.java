@@ -1,16 +1,18 @@
 package github.com.miralhas.ecommerce_uol.domain.model;
 
+import github.com.miralhas.ecommerce_uol.domain.event.CreatedPasswordResetTokenEvent;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
 import java.util.Objects;
 
 @Getter
 @Setter
 @Entity
-public class PasswordResetToken {
+public class PasswordResetToken extends AbstractAggregateRoot<PasswordResetToken> {
 
     @Id
     private Long id;
@@ -21,6 +23,10 @@ public class PasswordResetToken {
     @MapsId
     @OneToOne(targetEntity = User.class, fetch = FetchType.LAZY)
     private User user;
+
+    public void registerCreatedPasswordResetTokenEvent() {
+        registerEvent(new CreatedPasswordResetTokenEvent(this));
+    }
 
     @Override
     public final boolean equals(Object o) {
