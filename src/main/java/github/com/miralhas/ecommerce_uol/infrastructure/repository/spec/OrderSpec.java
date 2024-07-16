@@ -20,6 +20,7 @@ public class OrderSpec {
             if (filter.isMonthly()) {
                 var currentYear = OffsetDateTime.now().getYear();
                 var currentMonth = OffsetDateTime.now().getMonthValue();
+                if (filter.getNumber() != null) currentMonth = filter.getNumber();
                 var monthStart = OffsetDateTime.of(currentYear, currentMonth, 1, 0, 0, 0, 0, ZoneOffset.UTC);
                 var monthEnd = monthStart.plusMonths(1).minusHours(1).plusMinutes(59);
                 predicates.add(builder.between(root.get("createdAt"), monthStart, monthEnd));

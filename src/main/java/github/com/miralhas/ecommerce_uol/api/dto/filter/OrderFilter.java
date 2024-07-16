@@ -1,6 +1,9 @@
 package github.com.miralhas.ecommerce_uol.api.dto.filter;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -24,4 +27,8 @@ public class OrderFilter {
     private boolean monthly;
 
     private boolean weekly;
+
+    @Positive
+    @Max(12)
+    private Integer number;
 }

@@ -46,18 +46,29 @@ public class PasswordResetService {
 
 
     @Transactional
-    public void create(JwtAuthenticationToken authToken) {
+    public void createOrUpdateToken(JwtAuthenticationToken authToken) {
         User user = authenticationService.findUserByEmailOrException(authToken.getName());
         var tokenOptional = passwordResetTokenRepository.findById(user.getId());
         if (tokenOptional.isPresent()) {
-            var token = tokenOptional.get();
-            token.setToken(UUID.randomUUID().toString());
-            token.registerCreatedPasswordResetTokenEvent();
-            passwordResetTokenRepository.save(token);
+            updateToken(tokenOptional.get());
             return;
         }
+        createToken(user);
+    }
+
+
+    @Transactional
+    public void createToken(User user) {
         PasswordResetToken token = createResetTokenObject(user);
-        token.registerCreatedPasswordResetTokenEvent();
+        token.publishCreatedPasswordResetTokenEvent();
+        passwordResetTokenRepository.save(token);
+    }
+
+
+    @Transactional
+    public void updateToken(PasswordResetToken token) {
+        token.setToken(UUID.randomUUID().toString());
+        token.publishCreatedPasswordResetTokenEvent();
         passwordResetTokenRepository.save(token);
     }
 

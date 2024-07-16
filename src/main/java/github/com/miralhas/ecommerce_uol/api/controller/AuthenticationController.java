@@ -1,14 +1,12 @@
 package github.com.miralhas.ecommerce_uol.api.controller;
 
 import github.com.miralhas.ecommerce_uol.api.dto.LoginDTO;
-import github.com.miralhas.ecommerce_uol.api.dto.PasswordResetTokenDTO;
 import github.com.miralhas.ecommerce_uol.api.dto.UserDTO;
 import github.com.miralhas.ecommerce_uol.api.dto.input.ChangePasswordInput;
 import github.com.miralhas.ecommerce_uol.api.dto.input.CreateUserInput;
 import github.com.miralhas.ecommerce_uol.api.dto.input.LoginInput;
 import github.com.miralhas.ecommerce_uol.api.dto_mapper.UserMapper;
 import github.com.miralhas.ecommerce_uol.api.dto_mapper.UserUnmapper;
-import github.com.miralhas.ecommerce_uol.domain.model.PasswordResetToken;
 import github.com.miralhas.ecommerce_uol.domain.model.User;
 import github.com.miralhas.ecommerce_uol.domain.service.AuthenticationService;
 import github.com.miralhas.ecommerce_uol.domain.service.PasswordResetService;
@@ -50,7 +48,7 @@ public class AuthenticationController {
     @PutMapping("/resetPassword")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void createPasswordResetToken(JwtAuthenticationToken authToken) {
-        passwordResetService.create(authToken);
+        passwordResetService.createOrUpdateToken(authToken);
     }
 
 

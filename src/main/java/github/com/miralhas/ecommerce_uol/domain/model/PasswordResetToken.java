@@ -24,7 +24,7 @@ public class PasswordResetToken extends AbstractAggregateRoot<PasswordResetToken
     @OneToOne(targetEntity = User.class, fetch = FetchType.LAZY)
     private User user;
 
-    public void registerCreatedPasswordResetTokenEvent() {
+    public void publishCreatedPasswordResetTokenEvent() {
         registerEvent(new CreatedPasswordResetTokenEvent(this));
     }
 
