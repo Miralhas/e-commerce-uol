@@ -8,6 +8,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.*;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -18,6 +19,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import java.net.URI;
 import java.util.HashMap;
+import java.util.Objects;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -37,9 +39,25 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
 
+    @ExceptionHandler(BadCredentialsException.class)
+    public ProblemDetail handleBadCredentialsException(BadCredentialsException ex, WebRequest webRequest) {
+        String detail = messageSource.getMessage(
+                "PasswordComparisonAuthenticator.badCredentials", new Object[]{}, LocaleContextHolder.getLocale()
+        );
+        var problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, detail);
+        problemDetail.setTitle("Autenticação Inválida");
+        problemDetail.setType(URI.create("http://localhost:8080/error/authentication"));
+        return problemDetail;
+    }
+
+
     @ExceptionHandler(AuthenticationException.class)
     public ProblemDetail handleAuthenticationException(AuthenticationException ex, WebRequest webRequest) {
-        var problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        var detail = ex.getMessage();
+//        String localeMessage = messageSource.getMessage(
+//                "PasswordComparisonAuthenticator.badCredentials", new Object[]{}, LocaleContextHolder.getLocale()
+//        );
+        var problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
         problemDetail.setTitle("Autenticação Inválida");
         problemDetail.setType(URI.create("http://localhost:8080/error/authentication"));
         return problemDetail;

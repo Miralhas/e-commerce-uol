@@ -18,9 +18,7 @@ public class SmtpSendEmailServiceImpl implements SendEmailService {
 
     @Value("${compass.mail.sender}")
     private String emailProperties;
-
     private final JavaMailSender javaMailSender;
-
     private final Configuration freeMarkerConfig;
 
     @Override

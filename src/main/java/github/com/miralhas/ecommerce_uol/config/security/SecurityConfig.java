@@ -1,6 +1,8 @@
 package github.com.miralhas.ecommerce_uol.config.security;
 
+import io.swagger.v3.oas.models.PathItem;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -26,11 +28,11 @@ import java.util.List;
 @Configuration
 @EnableMethodSecurity
 @RequiredArgsConstructor
-@EnableWebSecurity(debug = true)
 public class SecurityConfig {
 
     private final JwtDecoder jwtDecoder;
     private final JwtAuthenticationConverter jwtAuthenticationConverter;
+    private final CustomAccessDeniedHandlerImpl customAccessDeniedHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -53,10 +55,14 @@ public class SecurityConfig {
                         jwt.decoder(jwtDecoder);
                         jwt.jwtAuthenticationConverter(jwtAuthenticationConverter);
                     });
-                    resourceServer.accessDeniedHandler(new CustomAccessDeniedHandlerImpl());
+                    resourceServer.accessDeniedHandler(customAccessDeniedHandler);
                     resourceServer.authenticationEntryPoint(new CustomAuthenticationEntryPoint());
                 })
                 .authorizeHttpRequests(authz -> {
+                    authz.requestMatchers(HttpMethod.GET, "/**").permitAll();
+                    authz.requestMatchers(HttpMethod.DELETE, "/**").hasRole("ADMIN");
+                    authz.requestMatchers(HttpMethod.PUT, "/api/products/**").hasRole("ADMIN");
+                    authz.requestMatchers(HttpMethod.POST, "/api/products").hasRole("ADMIN");
                     authz.requestMatchers(HttpMethod.POST, "/api/auth/create", "api/auth/login").permitAll();
                     authz.anyRequest().authenticated();
                 })
@@ -65,7 +71,7 @@ public class SecurityConfig {
 
 
     @Bean
-    public AuthenticationManager authenticationManager(UserDetailsService userDetailsService) {
+    public AuthenticationManager authenticationManager(UserDetailsService userDetailsService, MessageSource messageSource) {
         var authProvider = new DaoAuthenticationProvider(passwordEncoder());
         authProvider.setUserDetailsService(userDetailsService);
         return new ProviderManager(authProvider);

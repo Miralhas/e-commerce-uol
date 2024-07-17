@@ -79,16 +79,14 @@ public class OrderController implements OrderControllerOpenAPI {
     @Override
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('ADMIN')")
-    public OrderDTO updateOrder(@PathVariable Long id, @RequestBody @Valid OrderInput orderInput) {
-        SalesOrder order = orderService.update(id, orderInput);
+    public OrderDTO updateOrder(@PathVariable Long id, @RequestBody @Valid OrderInput orderInput, JwtAuthenticationToken authToken) {
+        SalesOrder order = orderService.update(id, orderInput, authToken);
         return orderMapper.toModel(order);
     }
 
 
     @Override
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteOrder(@PathVariable Long id) {
         orderService.deleteOrderById(id);

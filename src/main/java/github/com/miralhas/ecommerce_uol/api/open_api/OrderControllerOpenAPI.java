@@ -27,7 +27,7 @@ public interface OrderControllerOpenAPI {
     OrderDTO createOrder(@RequestBody @Valid OrderInput orderInput, JwtAuthenticationToken authToken);
 
     @Operation(summary = "Create a order")
-    OrderDTO updateOrder(@PathVariable Long id, @RequestBody @Valid OrderInput orderInput);
+    OrderDTO updateOrder(@PathVariable Long id, @RequestBody @Valid OrderInput orderInput, JwtAuthenticationToken authToken);
 
     @Operation(summary = "Delete a order")
     void deleteOrder(@PathVariable Long id);

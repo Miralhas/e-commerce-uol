@@ -54,7 +54,6 @@ public class ProductController implements ProductControllerOpenAPI {
     @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasRole('ADMIN')")
     public ProductDTO createProduct(@RequestBody @Valid ProductInput productInput) {
         Product product = productUnmapper.toDomainObject(productInput);
         product = productService.save(product);
@@ -65,7 +64,6 @@ public class ProductController implements ProductControllerOpenAPI {
     @Override
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('ADMIN')")
     public ProductDTO updateProduct(@PathVariable Long id, @RequestBody @Valid ProductInput productInput) {
         Product product = productService.update(id, productInput);
         return productMapper.toModel(product);
@@ -74,7 +72,6 @@ public class ProductController implements ProductControllerOpenAPI {
 
     @Override
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteProduct(@PathVariable Long id) {
         productService.delete(id);
@@ -84,7 +81,6 @@ public class ProductController implements ProductControllerOpenAPI {
     @Override
     @PutMapping("/{id}/activate")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasRole('ADMIN')")
     public void activateProduct(@PathVariable Long id) {
         productService.activateProduct(id);
     }
@@ -92,7 +88,6 @@ public class ProductController implements ProductControllerOpenAPI {
 
     @Override
     @PutMapping("/{id}/inactivate")
-    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void inactivateProduct(@PathVariable Long id) {
         productService.inactivateProduct(id);
