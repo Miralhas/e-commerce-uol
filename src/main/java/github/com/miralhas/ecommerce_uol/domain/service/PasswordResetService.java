@@ -41,7 +41,10 @@ public class PasswordResetService {
 
 
     private void validateToken(String firstToken, String secondToken) {
-        if (!Objects.equals(firstToken, secondToken)) throw new BusinessException("Token inválido");
+        if (!Objects.equals(firstToken, secondToken)) throw new BusinessException(
+                "O token fornecido para redefinição de senha não é válido. " +
+                        "Por favor, verifique o token enviado ou solicite um novo token de redefinição de senha e tente novamente."
+        );
     }
 
 

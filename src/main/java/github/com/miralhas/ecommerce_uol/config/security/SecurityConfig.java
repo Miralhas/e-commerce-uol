@@ -35,6 +35,14 @@ public class SecurityConfig {
     private final CustomAccessDeniedHandlerImpl customAccessDeniedHandler;
 
     @Bean
+    public AuthenticationManager authenticationManager(UserDetailsService userDetailsService) {
+        var authProvider = new DaoAuthenticationProvider(passwordEncoder());
+        authProvider.setUserDetailsService(userDetailsService);
+        return new ProviderManager(authProvider);
+    }
+
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
@@ -67,14 +75,6 @@ public class SecurityConfig {
                     authz.anyRequest().authenticated();
                 })
                 .build();
-    }
-
-
-    @Bean
-    public AuthenticationManager authenticationManager(UserDetailsService userDetailsService, MessageSource messageSource) {
-        var authProvider = new DaoAuthenticationProvider(passwordEncoder());
-        authProvider.setUserDetailsService(userDetailsService);
-        return new ProviderManager(authProvider);
     }
 
 

@@ -8,9 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class CreatedPasswordResetTokenListener {
 
     private final SendEmailService sendEmailService;
@@ -19,6 +19,7 @@ public class CreatedPasswordResetTokenListener {
     public void onPasswordResetTokenCreated(CreatedPasswordResetTokenEvent event) {
         var user = event.getPasswordResetToken().getUser();
         var token = event.getPasswordResetToken().getToken();
+        log.info("SENDING EMAIL TO USER: %s...".formatted(user.getEmail()));
 
         var message = Message.builder()
                 .recipient(user.getEmail())
@@ -29,5 +30,7 @@ public class CreatedPasswordResetTokenListener {
                 .build();
 
         sendEmailService.send(message);
+
+        log.info("EMAIL SENT TO USER: %s...".formatted(user.getEmail()));
     }
 }

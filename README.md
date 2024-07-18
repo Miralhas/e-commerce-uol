@@ -72,7 +72,12 @@ Para instalar e rodar esse projeto de forma local, siga os seguintes passos:
   - [Spring RFC 9457](https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-ann-rest-exceptions.html)
   - [RFC 9457](https://datatracker.ietf.org/doc/html/rfc9457)
 
+**Autenticação**
+- [x] Implementar Autenticação via Token JWT.
+- [x] Implementar Autenticação para usuários autenticados.
+- [x] Implementar um método para resetar a senha do usuário.
+
 
 ## Modelo Entidade Relacionamento
 
-![entidade_relacionamento](https://github.com/Miralhas/e-commerce-uol/assets/89564433/35467533-7ad2-40ff-a2f8-fd50f0f197a7)
+![eer_ecommerce](https://github.com/user-attachments/assets/a1b95166-fd2b-4179-883d-1ce78e2e35d3)
