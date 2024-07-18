@@ -3,10 +3,15 @@ package github.com.miralhas.ecommerce_uol.api.exception_handler;
 import github.com.miralhas.ecommerce_uol.domain.exception.BusinessException;
 import github.com.miralhas.ecommerce_uol.domain.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.*;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -15,6 +20,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import java.net.URI;
 import java.util.HashMap;
+import java.util.Objects;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -25,12 +31,32 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     // Padrão de Resposta RFC 9457
     // https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-ann-rest-exceptions.html
     // https://datatracker.ietf.org/doc/html/rfc9457
-
     @ExceptionHandler(BusinessException.class)
     public ProblemDetail handleBusinessException(BusinessException ex, WebRequest webRequest) {
         var problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
         problemDetail.setTitle("Requisição Inválida");
         problemDetail.setType(URI.create("http://localhost:8080/error/requisicao-invalida"));
+        return problemDetail;
+    }
+
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ProblemDetail handleBadCredentialsException(BadCredentialsException ex, WebRequest webRequest) {
+        String detail = messageSource.getMessage(
+                "PasswordComparisonAuthenticator.badCredentials", new Object[]{}, LocaleContextHolder.getLocale()
+        );
+        var problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, detail);
+        problemDetail.setTitle("Autenticação Inválida");
+        problemDetail.setType(URI.create("http://localhost:8080/error/authentication"));
+        return problemDetail;
+    }
+
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ProblemDetail handleAuthenticationException(AuthenticationException ex, WebRequest webRequest) {
+        var problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
+        problemDetail.setTitle("Autenticação Inválida");
+        problemDetail.setType(URI.create("http://localhost:8080/error/authentication"));
         return problemDetail;
     }
 
@@ -46,6 +72,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleUncaughtException(Exception ex, WebRequest webRequest) {
+        if (ex instanceof AccessDeniedException authError) throw authError;
         var status = HttpStatus.INTERNAL_SERVER_ERROR;
         var detail = "Ocorreu um erro interno inesperado no sistema. Tente novamente e se "
                 + "o problema persistir, entre em contato com o administrador do sistema.";
@@ -84,5 +111,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         problemDetail.setTitle("Mensagem incompreensivel");
         problemDetail.setType(URI.create("https://localhost:8080/errors/mensagem-incompreensivel"));
         return super.handleExceptionInternal(ex, problemDetail, headers, status, request);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        Object[] args = new Object[]{ex.getPropertyName(), ex.getValue()};
+        String defaultDetail = "Falha ao converter '" + args[0] + "' de valor: '" + args[1] + "'. " +
+                "Por favor, verifique o valor enviado e tente novamente";
+        ProblemDetail body = this.createProblemDetail(ex, status, defaultDetail, (String)null, args, request);
+        return this.handleExceptionInternal(ex, body, headers, status, request);
     }
 }

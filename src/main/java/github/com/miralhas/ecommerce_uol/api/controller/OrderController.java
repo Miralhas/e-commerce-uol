@@ -22,6 +22,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -67,9 +69,9 @@ public class OrderController implements OrderControllerOpenAPI {
     @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public OrderDTO createOrder(@RequestBody @Valid OrderInput orderInput) {
+    public OrderDTO createOrder(@RequestBody @Valid OrderInput orderInput, JwtAuthenticationToken authToken) {
         SalesOrder salesOrder = orderUnmapper.toDomainObject(orderInput);
-        salesOrder = orderService.create(salesOrder);
+        salesOrder = orderService.create(salesOrder, authToken);
         return orderMapper.toModel(salesOrder);
     }
 
@@ -77,8 +79,8 @@ public class OrderController implements OrderControllerOpenAPI {
     @Override
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public OrderDTO updateOrder(@PathVariable Long id, @RequestBody @Valid OrderInput orderInput) {
-        SalesOrder order = orderService.update(id, orderInput);
+    public OrderDTO updateOrder(@PathVariable Long id, @RequestBody @Valid OrderInput orderInput, JwtAuthenticationToken authToken) {
+        SalesOrder order = orderService.update(id, orderInput, authToken);
         return orderMapper.toModel(order);
     }
 
@@ -93,6 +95,7 @@ public class OrderController implements OrderControllerOpenAPI {
 
     @Override
     @PutMapping("/{id}/confirm")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.OK)
     public void confirmOrder(@PathVariable Long id) {
         orderService.confirmOrder(id);
@@ -101,6 +104,7 @@ public class OrderController implements OrderControllerOpenAPI {
 
     @Override
     @PutMapping("/{id}/cancel")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.OK)
     public void cancelOrder(@PathVariable Long id) {
         orderService.cancelOrder(id);

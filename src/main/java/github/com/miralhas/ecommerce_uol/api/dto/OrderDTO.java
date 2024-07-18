@@ -13,7 +13,7 @@ public class OrderDTO {
     private Long id;
     private BigDecimal totalValue;
     private OffsetDateTime createdAt;
-    private OffsetDateTime updatedAt;
     private List<OrderItemDTO> items;
+    private OrderUserDTO user;
     private String status;
 }
